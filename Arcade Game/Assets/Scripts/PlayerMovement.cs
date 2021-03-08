@@ -5,15 +5,23 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float movementSpeed;
-
     public float verticalBorder;
     public float horizontalBorder;
     public float pushForce = 1;
-    public int shootCooldownAmount;
-
+    public GameObject turret1;
+    public GameObject turret2;
+    public GameObject turret3;
+    public GameObject turret4;
     public GameObject bullet;
+    public float shootCooldown;
+    public float shootCooldownAmount;
+    public AudioClip shoot;
 
-    public int shootCooldown;
+    private GameObject gameHudObject;
+    private GameManager gameManager;
+
+    private Collider other;
+
 
     // Update is called once per frame
     void Update()
@@ -44,10 +52,14 @@ public class PlayerMovement : MonoBehaviour
             heading = Mathf.Atan2(horizontalInput2, verticalInput2);
             transform.rotation = Quaternion.Euler(0f, heading * Mathf.Rad2Deg, 0f);
 
-            if (shootCooldown == 0)
+            if (shootCooldown <= 0)
             {
-                Instantiate(bullet, transform.position, bullet.transform.rotation);
+                Instantiate(bullet, turret1.transform.position, transform.rotation);
+                Instantiate(bullet, turret2.transform.position, transform.rotation);
+                Instantiate(bullet, turret3.transform.position, transform.rotation);
+                Instantiate(bullet, turret4.transform.position, transform.rotation);
                 shootCooldown = shootCooldownAmount;
+                AudioSource.PlayClipAtPoint(shoot, transform.position, 1.0F);
             }
         }
 
@@ -68,7 +80,6 @@ public class PlayerMovement : MonoBehaviour
         transform.position = pos;
 
         //Count down cooldowns
-        if (shootCooldown > 0)
-            shootCooldown -= 1;
+        shootCooldown -= Time.deltaTime * 60;
     }
 }
